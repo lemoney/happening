@@ -1,0 +1,8 @@
+{% include 'dashboard/header.html' %}
+{% if capabilities %}
+    <ul>
+    {% for capability in capabilities %}
+        <li>{{ capability.name }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
