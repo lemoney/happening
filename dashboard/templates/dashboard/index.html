@@ -2,7 +2,7 @@
 {% if capabilities %}
     <ul>
     {% for capability in capabilities %}
-        <li>{{ capability.name }}</li>
+        <li>{{ capability.name }} : {{ capability.state }}</li>
     {% endfor %}
     </ul>
 {% endif %}

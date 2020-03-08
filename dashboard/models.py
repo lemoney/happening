@@ -59,4 +59,4 @@ class State(models.Model):
     filed_at = models.DateTimeField(auto_created=True)
 
     def __str__(self):
-        return self.value
+        return f"{self.service.name} is [{self.value}]"
