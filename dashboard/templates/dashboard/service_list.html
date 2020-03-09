@@ -1,0 +1,26 @@
+{% include 'dashboard/nav.html' %}
+
+<div class="container-fluid table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Capability</th>
+            <th scope="col">Current State</th>
+            <th scope="col">Latest Update Time</th>
+            <th scope="col">Enabled</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr class="table-{{ object.row_class }}" onclick="window.location.href='{% url 'dash:service_view' object.service.id %}'">
+                <th scope="row">{{ object.service.name }}</th>
+                <td>{{ object.service.capability }}</td>
+                <td><a href="{% url 'dash:state_view' object.service.id object.state.id %}">{{ object.state_display_name }}</a></td>
+                <td>{{ object.state.filed_at }}</td>
+                <td>{{ object.service.enabled }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

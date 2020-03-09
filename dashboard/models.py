@@ -115,6 +115,7 @@ class State(models.Model):
         if latest is None:
             latest = State(service=service, filed_at=make_aware(datetime.utcnow()), value=State.States.UP)
             log.warning(f"no state filed for [{service}] yet")
+            latest.save()
         return latest
 
     @staticmethod

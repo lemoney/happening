@@ -1,4 +1,4 @@
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView
 from django.shortcuts import reverse
@@ -58,4 +58,29 @@ class ServiceView(DetailView):
             'css_class': State.States.get_css_class(current_state.value)
         }
         context['states'] = State.get_recent_states(self.object)
+        return context
+
+
+class ServiceListView(ListView):
+    model = Service
+    template_name = 'dashboard/service_list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ServiceListView, self).get_context_data(**kwargs)
+        objects = list()
+        # TODO: Sort by enabled, then by status, then by newest state event
+        for service in context['object_list']:
+            state = State.get_latest_state(service)
+            css_class: str
+            if service.enabled:
+                css_class = State.States.get_css_class(state.value)
+            else:
+                css_class = " bg-info text-white"
+            objects.append({
+                'service': service,
+                'state': state,
+                'state_display_name': State.States(state.value).label,
+                'row_class': css_class,
+            })
+        context['object_list'] = objects
         return context
