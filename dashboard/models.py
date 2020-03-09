@@ -146,7 +146,22 @@ class StateComment(models.Model):
     """comments for updates about a given state"""
     state = models.ForeignKey(State, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_created=True)
+    edited_at = models.DateTimeField(auto_now=True)
+    edited = models.BooleanField(default=False)
     content = models.CharField("user comments", max_length=2048)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        origin = StateComment.objects.get(self.id)
+        if origin is not None:
+            # TODO: Check if the user saving is the user who made the comment otherwise balk early
+            self.edited = True
+        return super(StateComment, self).save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+    @staticmethod
+    def get_comments(state: State) -> List['StateComment']:
+        return StateComment.objects.filter(state=state).order_by('-created_at')
 
 
 class StateChange(models.Model):
