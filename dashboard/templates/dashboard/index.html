@@ -19,7 +19,7 @@
                             <div class="btn-group" role="group" aria-label="action group">
                                 <a class="btn btn-outline-secondary" href="{% url 'dash:service_view' capability.id %}"
                                    role="button">View</a>
-                                <a class="btn btn-outline-secondary" href="#" role="button">Update Status</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'dash:state_edit_view' capability.id capability.state_id %}" role="button">Update Status</a>
                                 <a class="btn btn-outline-secondary"
                                    href="{% url 'dash:service_edit_view' capability.id %}" role="button">Edit</a>
                             </div>

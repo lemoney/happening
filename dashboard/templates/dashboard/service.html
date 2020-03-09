@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="alert alert-{{ current_state.css_class }}" role="alert">
         <h6 class="alert-heading">
-            <strong>Current state:</strong> <a href="#" class="alert-link">{{ current_state.display_name }}</a>
+            <strong>Current state:</strong> <a href="{% url 'dash:state_view' object.id current_state.id %}" class="alert-link">{{ current_state.display_name }}</a>
         </h6>
         <p>Started at: {{ current_state.filed_at }}</p>
         {% if current_state.forecast_next %}
@@ -83,7 +83,7 @@
                     Recent Service States
                 </div>
                 <div class="card-text">
-                    <table class="table">
+                    <table class="table table-bordered table-hover table-striped">
                         <thead>
                         <tr>
                             <th scope="col">Date</th>
@@ -93,7 +93,7 @@
                         </thead>
                         <tbody>
                         {% for state in states %}
-                            <tr>
+                            <tr onclick="window.location.href='{% url 'dash:state_view' object.id state.id %}'">
                                 <th scope="row">{{ state.filed_at }}</th>
                                 <td>{{ state.value }}</td>
                                 <td>{{ state.forecast_change_date }}</td>
@@ -103,7 +103,7 @@
                     </table>
                 </div>
                 <div class="card-footer">
-                    <a class="btn btn-primary" href="#">New State</a>
+                    <a class="btn btn-primary" href="{% url 'dash:state_new_view' object.id %}">New State</a>
                 </div>
             </div>
         </div>

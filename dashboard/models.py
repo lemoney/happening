@@ -42,6 +42,7 @@ class Service(models.Model):
                 'id': service.id,
                 'name': service.name,
                 'description': service.description,
+                'state_id': state.id,
                 'state': State.States(state.value).label,
                 'filed_time': filed_time,
                 'css_class': color

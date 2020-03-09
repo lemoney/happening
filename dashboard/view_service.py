@@ -52,6 +52,7 @@ class ServiceView(DetailView):
         context = super(ServiceView, self).get_context_data(**kwargs)
         current_state = State.get_latest_state(service=self.object)
         context['current_state'] = {
+            'id': current_state.id,
             'filed_at': current_state.filed_at,
             'forecast_next': current_state.forecast_change_date,
             'display_name': State.States(current_state.value).label,
