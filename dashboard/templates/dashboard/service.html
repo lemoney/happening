@@ -1,0 +1,41 @@
+{% include 'dashboard/nav.html' %}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <div class="form-group">
+                <label for="name">Service Name</label>
+                <input type="text" class="form-control" id="name" aria-describedby="nameHelp"
+                       value="{{ object.name }}">
+                <small id="nameHelp" class="form-text text-muted">Service Name for usage across <i>Happening</i></small>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" class="form-control" id="description" aria-describedby="descriptionHelp"
+                       value="{{ object.description }}">
+                <small id="descriptionHelp" class="form-text text-muted">Longer form for describing the service to
+                    viewers</small>
+            </div>
+            <div class="form-group form-check">
+                {% if object.public %}
+                    <input type="checkbox" class="form-check-input" id="public" checked>
+                {% else %}
+                    <input type="checkbox" class="form-check-input" id="public">
+                {% endif %}
+                <label class="form-check-label" for="public">Public (Service is viewable without
+                    authentication)</label>
+            </div>
+            <div class="form-group form-check">
+                {% if object.enabled %}
+                    <input type="checkbox" class="form-check-input" id="enabled" checked>
+                {% else %}
+                    <input type="checkbox" class="form-check-input" id="enabled">
+                {% endif %}
+                <label class="form-check-label" for="enabled">Allow the service into the application graph</label>
+            </div>
+            <a href="{% url 'dash:service_edit_view' object.id %}" class="btn btn-primary">Edit</a>
+        </div>
+    </div>
+</div>

@@ -1,8 +1,30 @@
-{% include 'dashboard/header.html' %}
-{% if capabilities %}
-    <ul>
-    {% for capability in capabilities %}
-        <li>{{ capability.name }} : {{ capability.state }}</li>
-    {% endfor %}
-    </ul>
-{% endif %}
+{% include 'dashboard/nav.html' %}
+<div class="container-fluid">
+    <div class="row">
+        {% if capabilities %}
+            {% for capability in capabilities %}
+                <div class="col-sm-2">
+                    <div class="card text-center" style="width: 25rem;">
+                        <div class="card-header text-white {{ capability.css_class }}">
+                            <h5 class="card-title">{{ capability.name }}</h5>
+                            <div class="text-left">
+                                <h6 class="card-subtitle mb-1">State: {{ capability.state }}</h6>
+                                <h6 class="card-subtitle mb-1">Since: {{ capability.filed_time }}</h6>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-subtitle mb-2"><i>{{ capability.description }}</i></p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="btn-group" role="group" aria-label="action group">
+                                <a class="btn btn-outline-secondary" href="{% url 'dash:service_view' capability.id %}" role="button">View</a>
+                                <a class="btn btn-outline-secondary" href="#" role="button">Update Status</a>
+                                <a class="btn btn-outline-secondary" href="{% url 'dash:service_edit_view' capability.id %}" role="button">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
