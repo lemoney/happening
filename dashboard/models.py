@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as text
 from django.conf import settings
 from django.utils.timezone import make_aware
+from django.contrib.auth.models import User
 from typing import List, Dict, Union
 from datetime import datetime
 from logging import getLogger
@@ -105,6 +106,21 @@ class State(models.Model):
     filed_at = models.DateTimeField(auto_created=True)
     forecast_change_date = models.DateTimeField("Time this state is expected to change", null=True, blank=True)
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        origin = State.objects.get(id=self.id)
+        if origin is not None:
+            # means that the service exists already and something is changing
+            if self.service.id != origin.service.id:
+                StateChange(state=self, change_type=StateChange.ChangeTypes.SERVICE_CHANGE, old_value=origin.service.id, new_value=self.service.id).save()
+            if self.value != origin.value:
+                StateChange(state=self, change_type=StateChange.ChangeTypes.VALUE_CHANGE, old_value=origin.value, new_value=self.value).save()
+            if self.filed_at != origin.filed_at:
+                StateChange(state=self, change_type=StateChange.ChangeTypes.FILED_AT, old_value=origin.filed_at, new_value=self.filed_at).save()
+            if self.forecast_change_date != origin.forecast_change_date:
+                StateChange(state=self, change_type=StateChange.ChangeTypes.FORECAST, old_value=origin.forecast_change_date, new_value=self.forecast_change_date).save()
+        return super(State, self).save(force_insert=force_update, using=using, update_fields=update_fields)
+
     def __str__(self):
         return f"[{self.filed_at}] {self.service.name} is [{self.value}]"
 
@@ -124,3 +140,24 @@ class State(models.Model):
         """returns recent states for a service"""
         return State.objects.filter(service_id__exact=service.id, filed_at__lte=make_aware(datetime.utcnow())).order_by(
             '-filed_at')[:limit]
+
+
+class StateComment(models.Model):
+    """comments for updates about a given state"""
+    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField("user comments", max_length=2048)
+
+
+class StateChange(models.Model):
+    """tracks changes to states"""
+    class ChangeTypes(models.TextChoices):
+        SERVICE_CHANGE = 'service_change', text('Changed Service')
+        VALUE_CHANGE = 'value_change', text('Changed State')
+        FILED_AT = 'filed_at', text('Filed Time')
+        FORECAST = 'forecast', text('Update Forecast Changed')
+    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    change_type = models.CharField(choices=ChangeTypes.choices, max_length=128)
+    old_value = models.CharField("the original value of the state property", max_length=2048)
+    new_value = models.CharField("the current value of the state property", max_length=2048)
