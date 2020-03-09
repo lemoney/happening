@@ -1,7 +1,12 @@
 from django.views.generic import DetailView
+from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView
 from django.shortcuts import reverse
 from .models import Service, State
+from logging import getLogger
+
+
+log = getLogger("happening.dashboard.views.service")
 
 
 class ServiceNewView(CreateView):
@@ -30,6 +35,18 @@ class ServiceView(DetailView):
     """View of a service"""
     template_name = "dashboard/service.html"
     model = Service
+    
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.user.is_authenticated:
+            return super(ServiceView, self).render_to_response(context, **response_kwargs)
+        else:
+            if self.object.public:
+                return super(ServiceView, self).render_to_response(context, **response_kwargs)
+            else:
+                log.error("service is not available to be viewed :: public is false")
+                return render(self.request, "dashboard/login.html", status=401, context={
+                    'next': reverse('dash:service_view', kwargs={'id': self.object.id})
+                })
 
     def get_context_data(self, **kwargs):
         context = super(ServiceView, self).get_context_data(**kwargs)

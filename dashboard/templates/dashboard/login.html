@@ -1,0 +1,56 @@
+{% include 'dashboard/header.html' %}
+
+<div class="container-fluid">
+    <div class="jumbotron">
+        <h1 class="display-4">Login to <i>Happening</i>!</h1>
+        <p class="lead">Happening is a status page tool developed to let people know what's <i>happening!</i></p>
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Login Problem</h4>
+                <p>
+                    Your username and password didn't match or <a href="#" class="alert-link">contact your support
+                    team</a>
+                </p>
+                <hr>
+                <p class="mb-0">Please try again!</p>
+            </div>
+        {% endif %}
+        <hr>
+        {% if next %}
+            {% if user.is_authenticated %}
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Insufficient Access!</h4>
+                    <p>Your account doesn't have access to this page</p>
+                    <hr>
+                    <p class="mb-0">If this is an error try again or contact an <a href="#" class="alert-link">administrator</a>
+                    </p>
+                </div>
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Login to continue</h4>
+                    <p>You need to be logged in to view this page</p>
+                    <hr>
+                    <p class="mb-0">If this is an error try again or contact an <a href="#" class="alert-link">administrator</a>
+                    </p>
+                </div>
+            {% endif %}
+            <hr>
+        {% endif %}
+        <form method="post" action="{% url 'dash:login' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" aria-describedby="usernameHelp">
+                <small id="usernameHelp" class="form-text text-muted">Login Username</small>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password"
+                       aria-describedby="passwordHelp">
+                <small id="passwordHelp" class="form-text text-muted">Login Password</small>
+            </div>
+            <input class="btn btn-success" type="submit" value="login">
+        </form>
+    </div>
+</div>

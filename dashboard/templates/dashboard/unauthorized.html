@@ -1,0 +1,11 @@
+{% include 'dashboard/nav.html' %}
+
+<div class="container-fluid">
+    <div class="jumbotron">
+        <h1 class="display-4">Uh oh! Unauthorized!</h1>
+        <p class="lead">The resource you're trying to view requires you to be logged in.</p>
+        <hr class="my-4">
+        <p>To login visit the login page by clicking the button</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'dash:login' %}" role="button">Login</a>
+    </div>
+</div>
