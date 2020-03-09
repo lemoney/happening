@@ -30,6 +30,9 @@
         {% endif %}
     </div>
 </div>
-<div>
-    <a class="btn btn-success" href="{% url 'dash:service_view_new' %}">Create Service</a>
-</div>
+{% if user.is_authenticated %}
+    {# TODO: make this button stick to the bottom left of the screen #}
+    <div>
+        <a class="btn btn-success" href="{% url 'dash:service_view_new' %}">Create Service</a>
+    </div>
+{% endif %}
