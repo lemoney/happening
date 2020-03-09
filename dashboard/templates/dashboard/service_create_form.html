@@ -29,6 +29,10 @@
                     {% endif %}
                     <label class="form-check-label" for="public">Public: Service is viewable without
                         authentication)</label>
+                    <small id="furtherPublicHelp" class="form-text text-muted"><strong>Note:</strong> Only for
+                        capabilities,
+                        services never show up
+                        for unauthenticated users</small>
                 </div>
                 <div class="form-group form-check">
                     {% if object.enabled %}

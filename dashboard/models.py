@@ -4,6 +4,10 @@ from django.conf import settings
 from django.utils.timezone import make_aware
 from typing import List, Dict, Union
 from datetime import datetime
+from logging import getLogger
+
+
+log = getLogger("happening.dashboard.models")
 
 
 # Create your models here.
@@ -32,8 +36,6 @@ class Service(models.Model):
             filed_time: datetime
             color: str
             state = State.get_latest_state(service)
-            if state is None:
-                state = State(service=service, filed_at=make_aware(datetime.utcnow()), value=State.States.UP)
             filed_time = state.filed_at
             color = State.States.get_css_class(state.value)
             final.append({
@@ -83,17 +85,17 @@ class State(models.Model):
         @staticmethod
         def get_css_class(state) -> str:
             if state == State.States.UP.value:
-                return getattr(settings, "STATES_UP_COLOR", "bg-success")
+                return getattr(settings, "STATES_UP_COLOR", "success")
             elif state == State.States.DOWN.value:
-                return getattr(settings, "STATES_DOWN_COLOR", "bg-danger")
+                return getattr(settings, "STATES_DOWN_COLOR", "danger")
             elif state == State.States.MAINTENANCE_PLANNED.value:
-                return getattr(settings, "STATES_MAINTENANCE_PLANNED_COLOR", "bg-secondary")
+                return getattr(settings, "STATES_MAINTENANCE_PLANNED_COLOR", "secondary")
             elif state == State.States.MAINTENANCE_UNPLANNED.value:
-                return getattr(settings, "STATES_MAINTENANCE_UNPLANNED_COLOR", "bg-info")
+                return getattr(settings, "STATES_MAINTENANCE_UNPLANNED_COLOR", "info")
             elif state == State.States.DEGRADED_WARNING.value:
-                return getattr(settings, "STATES_DEGRADED_WARNING_COLOR", "bg-warning")
+                return getattr(settings, "STATES_DEGRADED_WARNING_COLOR", "warning")
             elif state == State.States.DEGRADED_CRITICAL.value:
-                return getattr(settings, "STATES_DEGRADED_CRITICAL_COLOR", "bg-dark")
+                return getattr(settings, "STATES_DEGRADED_CRITICAL_COLOR", "dark")
             else:
                 raise ValueError(f"unknown State.States value: {state}")
 
@@ -108,4 +110,15 @@ class State(models.Model):
     @staticmethod
     def get_latest_state(service: Service) -> Union['State', None]:
         """attempts to get the latest state for a service"""
-        return State.objects.filter(service=service.id, filed_at__lte=make_aware(datetime.utcnow())).order_by('-filed_at').first()
+        latest = State.objects.filter(service=service.id, filed_at__lte=make_aware(datetime.utcnow())).order_by(
+            '-filed_at').first()
+        if latest is None:
+            latest = State(service=service, filed_at=make_aware(datetime.utcnow()), value=State.States.UP)
+            log.warning(f"no state filed for [{service}] yet")
+        return latest
+
+    @staticmethod
+    def get_recent_states(service: Service, limit: int = 5) -> List['State']:
+        """returns recent states for a service"""
+        return State.objects.filter(service_id__exact=service.id, filed_at__lte=make_aware(datetime.utcnow())).order_by(
+            '-filed_at')[:limit]

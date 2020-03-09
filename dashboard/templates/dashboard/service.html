@@ -1,52 +1,111 @@
 {% include 'dashboard/nav.html' %}
 
 <div class="container-fluid">
-    <div class="card">
-        <div class="card-header">
-            <div class="form-group">
-                <label for="name">Service Name</label>
-                <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"
-                       value="{{ object.name }}" disabled>
-                <small id="nameHelp" class="form-text text-muted">Service Name for usage across <i>Happening</i></small>
+    <div class="alert alert-{{ current_state.css_class }}" role="alert">
+        <h6 class="alert-heading">
+            <strong>Current state:</strong> <a href="#" class="alert-link">{{ current_state.display_name }}</a>
+        </h6>
+        <p>Started at: {{ current_state.filed_at }}</p>
+        {% if current_state.forecast_next %}
+            <hr>
+            <p class="mb-0">Next expected update: {{ current_state.forecast_next }}</p>
+        {% endif %}
+        <p></p>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="form-group">
+                        <label for="name">Service Name</label>
+                        <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"
+                               value="{{ object.name }}" disabled>
+                        <small id="nameHelp" class="form-text text-muted">Service Name for usage across
+                            <i>Happening</i></small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" class="form-control" id="description" name="description"
+                               aria-describedby="descriptionHelp"
+                               value="{{ object.description }}" disabled>
+                        <small id="descriptionHelp" class="form-text text-muted">Longer form for describing the service
+                            to
+                            viewers</small>
+                    </div>
+                    <div class="form-group form-check">
+                        {% if object.public %}
+                            <input type="checkbox" class="form-check-input" id="public" name="public" checked disabled>
+                        {% else %}
+                            <input type="checkbox" class="form-check-input" id="public" name="public" disabled>
+                        {% endif %}
+                        <label class="form-check-label" for="public">Public: Service is viewable without
+                            authentication</label>
+                        <small id="furtherPublicHelp" class="form-text text-muted"><strong>Note:</strong> Only for
+                            capabilities,
+                            services never show up
+                            for unauthenticated users</small>
+                    </div>
+                    <div class="form-group form-check">
+                        {% if object.enabled %}
+                            <input type="checkbox" class="form-check-input" id="enabled" name="enabled" checked
+                                   disabled>
+                        {% else %}
+                            <input type="checkbox" class="form-check-input" id="enabled" name="enabled" disabled>
+                        {% endif %}
+                        <label class="form-check-label" for="enabled">Enabled: Allow the service into the application
+                            graph</label>
+                    </div>
+                    <div class="form-group form-check">
+                        {% if object.is_capability %}
+                            <input type="checkbox" class="form-check-input" id="is_capability" name="is_capability"
+                                   checked
+                                   disabled>
+                        {% else %}
+                            <input type="checkbox" class="form-check-input" id="is_capability" name="is_capability"
+                                   disabled>
+                        {% endif %}
+                        <label class="form-check-label" for="is_capability">Service is a capability: The service is the
+                            top
+                            level
+                            root for business capability. Typically this is a service like "e-commerce" that might be
+                            comprised
+                            of many services</label>
+                    </div>
+                    <a href="{% url 'dash:service_edit_view' object.id %}" class="btn btn-primary">Edit</a>
+                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="form-group">
-                <label for="description">Description</label>
-                <input type="text" class="form-control" id="description" name="description"
-                       aria-describedby="descriptionHelp"
-                       value="{{ object.description }}" disabled>
-                <small id="descriptionHelp" class="form-text text-muted">Longer form for describing the service to
-                    viewers</small>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    Recent Service States
+                </div>
+                <div class="card-text">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Forecasted Next Change</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for state in states %}
+                            <tr>
+                                <th scope="row">{{ state.filed_at }}</th>
+                                <td>{{ state.value }}</td>
+                                <td>{{ state.forecast_change_date }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-primary" href="#">New State</a>
+                </div>
             </div>
-            <div class="form-group form-check">
-                {% if object.public %}
-                    <input type="checkbox" class="form-check-input" id="public" name="public" checked disabled>
-                {% else %}
-                    <input type="checkbox" class="form-check-input" id="public" name="public" disabled>
-                {% endif %}
-                <label class="form-check-label" for="public">Public: Service is viewable without
-                    authentication</label>
-            </div>
-            <div class="form-group form-check">
-                {% if object.enabled %}
-                    <input type="checkbox" class="form-check-input" id="enabled" name="enabled" checked disabled>
-                {% else %}
-                    <input type="checkbox" class="form-check-input" id="enabled" name="enabled" disabled>
-                {% endif %}
-                <label class="form-check-label" for="enabled">Enabled: Allow the service into the application graph</label>
-            </div>
-            <div class="form-group form-check">
-                {% if object.is_capability %}
-                    <input type="checkbox" class="form-check-input" id="is_capability" name="is_capability" checked disabled>
-                {% else %}
-                    <input type="checkbox" class="form-check-input" id="is_capability" name="is_capability" disabled>
-                {% endif %}
-                <label class="form-check-label" for="is_capability">Service is a capability: The service is the top level
-                    root for business capability. Typically this is a service like "e-commerce" that might be comprised
-                    of many services</label>
-            </div>
-            <a href="{% url 'dash:service_edit_view' object.id %}" class="btn btn-primary">Edit</a>
         </div>
     </div>
 </div>

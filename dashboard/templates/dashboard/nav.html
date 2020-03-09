@@ -20,9 +20,9 @@
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
         {% if user.is_authenticated %}
-            <a class="nav-link" href="/logout">Logout</a>
+            <a class="nav-link" href="{% url 'dash:logout' %}">Logout</a>
         {% else %}
-            <a class="nav-link" href="/login">Login</a>
+            <a class="nav-link" href="{% url 'dash:login' %}">Login</a>
         {% endif %}
     </div>
 </nav>
