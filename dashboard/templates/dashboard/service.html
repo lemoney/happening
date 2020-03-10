@@ -18,21 +18,15 @@
                 <div class="card-header">
                     <div class="form-group">
                         <label for="name">Service Name</label>
-                        <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"
-                               value="{{ object.name }}" disabled>
-                        <small id="nameHelp" class="form-text text-muted">Service Name for usage across
-                            <i>Happening</i></small>
+                        <p class="form-control" id="name" aria-describedby="nameHelp">{{ object.name }}</p>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <input type="text" class="form-control" id="description" name="description"
-                               aria-describedby="descriptionHelp"
-                               value="{{ object.description }}" disabled>
-                        <small id="descriptionHelp" class="form-text text-muted">Longer form for describing the service
-                            to
-                            viewers</small>
+                        <p class="form-control" id="description" aria-describedby="descriptionHelp">
+                            {{ object.description }}
+                        </p>
                     </div>
                     <div class="form-group form-check">
                         {% if object.public %}

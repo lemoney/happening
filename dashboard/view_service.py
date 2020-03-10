@@ -33,7 +33,7 @@ class ServiceEditView(UpdateView):
 
 class ServiceView(DetailView):
     """View of a service"""
-    template_name = "dashboard/service.html"
+    template_name_suffix = ""
     model = Service
     
     def render_to_response(self, context, **response_kwargs):
@@ -64,7 +64,7 @@ class ServiceView(DetailView):
 
 class ServiceListView(ListView):
     model = Service
-    template_name = 'dashboard/service_list.html'
+    template_name_suffix = "_list"
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ServiceListView, self).get_context_data(**kwargs)

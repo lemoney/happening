@@ -3,6 +3,8 @@ from django.utils.translation import gettext_lazy as text
 from django.conf import settings
 from django.utils.timezone import make_aware
 from django.contrib.auth.models import User
+from .get_request import get_request
+
 from typing import List, Dict, Union
 from datetime import datetime
 from logging import getLogger
@@ -153,10 +155,16 @@ class StateComment(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        origin = StateComment.objects.get(self.id)
-        if origin is not None:
-            # TODO: Check if the user saving is the user who made the comment otherwise balk early
-            self.edited = True
+        if self.id is not None:
+            origin = StateComment.objects.get(self.id)
+            if origin is not None:
+                self.edited = True
+        else:
+            self.created_at = make_aware(datetime.utcnow())
+            self.edited_at = make_aware(datetime.utcnow())
+        user = get_request().user
+        print(user)
+        self.user = user
         return super(StateComment, self).save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
     @staticmethod
