@@ -1,7 +1,6 @@
 {% include 'dashboard/nav.html' %}
 <form method="post">
     {% csrf_token %}
-{# TODO: Fix the form so it actually submits #}
     <input type="hidden" name="service" value="{{ service.id }}">
     <div class="container-fluid">
         <div class="card">
