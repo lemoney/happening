@@ -1,3 +1,41 @@
 {% include 'dashboard/nav.html' %}
+<form method="post">
+    {% csrf_token %}
+{# TODO: Fix the form so it actually submits #}
+    <input type="hidden" name="service" value="{{ service.id }}">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div class="form-group">
+                    <label for="name">Creating State for Service</label>
+                    <p class="form-control" id="name" aria-describedby="nameHelp">{{ service.name }}</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="value">State Type</label>
+                    <select class="form-control" id="value" name="value">
+                        {% for choice in state_choices %}
+                            <option value="{{ choice.db_name }}">{{ choice.display_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-create state
+                <div class="form-group form-check">
+                    {% if form.errors.filed_at %}
+                        <div class="alert alert-danger" role="alert">
+                            <p class="mb-0">{{ form.errors.filed_at }}</p>
+                        </div>
+                    {% endif %}
+                    <label for="filed_at">Start Time:</label>
+                    <input type="datetime-local" id="filed_at" name="filed_at" value="{{ filed_at }}">
+                </div>
+                <div class="form-group form-check">
+                    <label for="forecast_change_date">Next Update:</label>
+                    <input type="datetime-local" id="forecast_change_date" name="forecast_change_date">
+                </div>
+                <input type="submit" class="btn btn-success" value="Create">
+            </div>
+        </div>
+    </div>
+</form>

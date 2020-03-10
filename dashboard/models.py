@@ -110,17 +110,20 @@ class State(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        origin = State.objects.get(id=self.id)
-        if origin is not None:
-            # means that the service exists already and something is changing
-            if self.service.id != origin.service.id:
-                StateChange(state=self, change_type=StateChange.ChangeTypes.SERVICE_CHANGE, old_value=origin.service.id, new_value=self.service.id).save()
-            if self.value != origin.value:
-                StateChange(state=self, change_type=StateChange.ChangeTypes.VALUE_CHANGE, old_value=origin.value, new_value=self.value).save()
-            if self.filed_at != origin.filed_at:
-                StateChange(state=self, change_type=StateChange.ChangeTypes.FILED_AT, old_value=origin.filed_at, new_value=self.filed_at).save()
-            if self.forecast_change_date != origin.forecast_change_date:
-                StateChange(state=self, change_type=StateChange.ChangeTypes.FORECAST, old_value=origin.forecast_change_date, new_value=self.forecast_change_date).save()
+        if self.filed_at is None and self.id is None:
+            self.filed_at = make_aware(datetime.utcnow())
+        if self.id is not None:
+            origin = State.objects.get(id=self.id)
+            if origin is not None:
+                # means that the service exists already and something is changing
+                if self.service.id != origin.service.id:
+                    StateChange(state=self, change_type=StateChange.ChangeTypes.SERVICE_CHANGE, old_value=origin.service.id, new_value=self.service.id).save()
+                if self.value != origin.value:
+                    StateChange(state=self, change_type=StateChange.ChangeTypes.VALUE_CHANGE, old_value=origin.value, new_value=self.value).save()
+                if self.filed_at != origin.filed_at:
+                    StateChange(state=self, change_type=StateChange.ChangeTypes.FILED_AT, old_value=origin.filed_at, new_value=self.filed_at).save()
+                if self.forecast_change_date != origin.forecast_change_date:
+                    StateChange(state=self, change_type=StateChange.ChangeTypes.FORECAST, old_value=origin.forecast_change_date, new_value=self.forecast_change_date).save()
         return super(State, self).save(force_insert=force_update, using=using, update_fields=update_fields)
 
     def __str__(self):
@@ -163,7 +166,6 @@ class StateComment(models.Model):
             self.created_at = make_aware(datetime.utcnow())
             self.edited_at = make_aware(datetime.utcnow())
         user = get_request().user
-        print(user)
         self.user = user
         return super(StateComment, self).save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 

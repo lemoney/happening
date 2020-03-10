@@ -2,7 +2,7 @@ from django.views.generic import DetailView, ListView
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView
 from django.shortcuts import reverse
-from .models import Service, State
+from .models import Service, State, StateComment
 from logging import getLogger
 
 
@@ -58,6 +58,7 @@ class ServiceView(DetailView):
             'display_name': State.States(current_state.value).label,
             'css_class': State.States.get_css_class(current_state.value)
         }
+        context['comments'] = StateComment.get_comments(current_state)
         context['states'] = State.get_recent_states(self.object)
         return context
 

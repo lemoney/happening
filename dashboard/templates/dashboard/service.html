@@ -3,7 +3,8 @@
 <div class="container-fluid">
     <div class="alert alert-{{ current_state.css_class }}" role="alert">
         <h6 class="alert-heading">
-            <strong>Current state:</strong> <a href="{% url 'dash:state_view' object.id current_state.id %}" class="alert-link">{{ current_state.display_name }}</a>
+            <strong>Current state:</strong> <a href="{% url 'dash:state_view' object.id current_state.id %}"
+                                               class="alert-link">{{ current_state.display_name }}</a>
         </h6>
         <p>Started at: {{ current_state.filed_at }}</p>
         {% if current_state.forecast_next %}
@@ -72,6 +73,51 @@
             </div>
         </div>
         <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <form method="post" action="{% url 'dash:state_add_comment' object.id current_state.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="state" value="{{ current_state.id }}">
+                        <div class="form-group">
+                            <label for="content">Add Comment</label>
+                            <textarea class="form-control" id="content" name="content"
+                                      aria-describedby="contentHelp"></textarea>
+                            <small id="contentHelp" class="form-text text-muted">plain text only!</small>
+                            <input class="btn btn-primary" type="submit" value="Comment">
+                        </div>
+                    </form>
+                </div>
+                <div class="card-text">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">User</th>
+                            <th scope="col">Content</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for comment in comments %}
+                            <tr onclick="window.location.href='{% url 'dash:state_edit_comment_view' object.id current_state.id comment.id %}'">
+                                <th scope="row">{{ comment.edited_at }}</th>
+                                <td>
+                                    {{ comment.user.username }}
+                                    {% if comment.edited %}
+                                        <small>(edited)</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ comment.content }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-primary" href="{% url 'dash:state_view' object.id current_state.id %}">View
+                        State</a>
+                </div>
+            </div>
+            <br>
             <div class="card">
                 <div class="card-header">
                     Recent Service States

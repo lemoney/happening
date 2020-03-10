@@ -15,7 +15,7 @@
         {% for object in object_list %}
             <tr class="table-{{ object.row_class }}" onclick="window.location.href='{% url 'dash:service_view' object.service.id %}'">
                 <th scope="row">{{ object.service.name }}</th>
-                <td>{{ object.service.capability }}</td>
+                <td>{{ object.service.is_capability }}</td>
                 <td><a href="{% url 'dash:state_view' object.service.id object.state.id %}">{{ object.state_display_name }}</a></td>
                 <td>{{ object.state.filed_at }}</td>
                 <td>{{ object.service.enabled }}</td>
